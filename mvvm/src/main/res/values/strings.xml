@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Architecture Example</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lbl_user_picture_desc">Imágen de usuario</string>
+    <string name="lbl_dismiss_dialog">Aceptar</string>
+    <string name="lbl_users_available">Usuarios disponibles</string>
 </resources>

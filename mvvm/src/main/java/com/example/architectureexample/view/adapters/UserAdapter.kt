@@ -1,18 +1,22 @@
 package com.example.architectureexample.view.adapters
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.architectureexample.databinding.ItemRvUserBinding
 import com.example.getdata.UserContainer
+import com.example.getdata.UserList
 
-class UserAdapter(private val listener: (id: Int?) -> Unit): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
-    private val users = listOf<UserContainer>()
-    private var index = 0
+typealias UserListener = (UserContainer?, Context) -> Unit
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder (
-        ItemRvUserBinding.inflate(LayoutInflater.from(parent.context), parent,false),
+class UserAdapter(private val listener: UserListener) :
+    RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    private val users = mutableListOf<UserContainer>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(
+        ItemRvUserBinding.inflate(LayoutInflater.from(parent.context), parent, false),
         listener
     )
 
@@ -22,18 +26,28 @@ class UserAdapter(private val listener: (id: Int?) -> Unit): RecyclerView.Adapte
         holder.bind(users[position])
     }
 
-    inner class ViewHolder(private val view: ItemRvUserBinding, val listener: (id: Int?) -> Unit): RecyclerView.ViewHolder(view.root) {
-        var currentId: Int? = null
+    @SuppressLint("NotifyDataSetChanged")
+    fun addUsers(newUsers: UserList) {
+        users.addAll(newUsers)
+        notifyDataSetChanged()
+    }
+
+    inner class ViewHolder(
+        private val view: ItemRvUserBinding,
+        private val listener: UserListener
+    ) : RecyclerView.ViewHolder(view.root) {
+        private var currentUser: UserContainer? = null
 
         init {
-            view.ivUserPicture.setOnClickListener {
-                listener(currentId)
+            view.cvUserItem.setOnClickListener {
+                listener(currentUser, view.root.context)
             }
         }
 
         fun bind(user: UserContainer) {
-            currentId = user.id
-            view
+            currentUser = user
+            view.user = user
         }
+
     }
 }
