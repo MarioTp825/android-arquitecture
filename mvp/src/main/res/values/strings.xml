@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">mvp</string>
+    <string name="lbl_user_picture_desc">Imágen de usuario</string>
+    <string name="lbl_dismiss_dialog">Aceptar</string>
+    <string name="lbl_users_available">Usuarios disponibles</string>
 </resources>

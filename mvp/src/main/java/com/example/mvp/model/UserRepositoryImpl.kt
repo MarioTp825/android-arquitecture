@@ -1,7 +1,7 @@
-package com.example.architectureexample.model
+package com.example.mvp.model
 
 import com.example.getdata.userService
 
-class MainRepositoryImpl : MainRepository {
+class UserRepositoryImpl : UserRepository {
     override suspend fun loadUsers(someData: Any?) = userService(15)
 }

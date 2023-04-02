@@ -1,24 +1,31 @@
-package com.example.architectureexample.viewModel
+package com.example.mvp.presenter
 
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.architectureexample.databinding.FragmentUserDialogBinding
-import com.example.architectureexample.observers.MainObserver
-import com.example.architectureexample.view.adapters.UserAdapter
 import com.example.getdata.UserContainer
-import com.example.getdata.UserList
+import com.example.mvp.contracts.UserContract
+import com.example.mvp.databinding.FragmentUserDialogBinding
+import com.example.mvp.model.UserRepository
+import com.example.mvp.view.adapters.UserAdapter
 import com.squareup.picasso.Picasso
 
-class MainViewModel : ViewModel() {
-    private val usersList: MutableLiveData<UserList?> = MutableLiveData(null)
-    private val loadingState: MutableLiveData<LoadingState> = MutableLiveData(LoadingState.LOADING)
+class UserPresenterImpl(
+    override val view: UserContract.View,
+    override val repository: UserRepository,
+) : UserContract.Presenter<UserAdapter> {
     private var dialogBinding: FragmentUserDialogBinding? = null
 
-    val adapter by lazy {
+    override suspend fun getUsers() {
+        view.updateState(UserContract.LoadingState.LOADING)
+        view.showUsers(
+            repository.loadUsers(null)
+        )
+        view.updateState(UserContract.LoadingState.DONE)
+    }
+
+    override val adapter by lazy {
         UserAdapter { user, context ->
             user ?: return@UserAdapter
             showUserImage(user, context)
@@ -57,26 +64,4 @@ class MainViewModel : ViewModel() {
         it.setOnDismissListener { dialogBinding = null }
         it.create()
     }
-
-    private val observer = MainObserver()
-
-    suspend fun loadUsers() {
-        usersList.postValue(
-            observer.loadUsers().sortedBy { it.id }
-        )
-    }
-
-    fun getUsers() = usersList
-
-    fun getLoadingState() = loadingState
-
-    fun finishLoading() {
-        loadingState.value = LoadingState.DONE
-    }
-
-}
-
-enum class LoadingState {
-    LOADING,
-    DONE;
 }

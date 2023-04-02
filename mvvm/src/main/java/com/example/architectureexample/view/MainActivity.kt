@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startProcesses() {
-        viewModel.viewModelScope.launch (Dispatchers.Default) {
+        viewModel.viewModelScope.launch(Dispatchers.Default) {
             viewModel.loadUsers()
         }
     }
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpObservers() {
         viewModel.getUsers().observe(this) {
-            if(it == null) return@observe
+            if (it == null) return@observe
             adapter.addUsers(it)
             viewModel.finishLoading()
         }
@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var View.visible:Boolean
-    get() = visibility == View.VISIBLE
-    set(value) {
-        visibility = if(value) View.VISIBLE else View.GONE
-    }
+    private var View.visible: Boolean
+        get() = visibility == View.VISIBLE
+        set(value) {
+            visibility = if (value) View.VISIBLE else View.GONE
+        }
 }

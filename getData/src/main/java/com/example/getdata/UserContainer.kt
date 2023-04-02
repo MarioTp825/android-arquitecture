@@ -1,6 +1,42 @@
 package com.example.getdata
 
+import com.github.javafaker.Faker
+import kotlinx.coroutines.delay
+import kotlin.random.Random
+
 typealias UserList = List<UserContainer>
+
+private const val MAX_IMAGE_URL_VALUE = 80
+private const val MAX_USER_AGE = 35
+
+suspend fun userService(amount: Short, secondsDelayed: Short = 1): UserList {
+    delay(timeMillis = secondsDelayed * 1000L)
+    return amount { buildFakeUser(it) }
+}
+
+private inline operator fun <T> Short.invoke(map: (Int) -> T): List<T> {
+    val ids = mutableSetOf<Int>()
+    while (ids.size < this) {
+        ids.add(Random.nextInt(until = MAX_IMAGE_URL_VALUE))
+    }
+    return ids.map(map)
+}
+
+private fun buildFakeUser(index: Int): UserContainer {
+    val faker = Faker()
+    return UserContainer(
+        id = index,
+        username = faker.name().username(),
+        fullName = faker.name().fullName(),
+        url = buildPictureUrl(index),
+        age = Random.nextInt(until = MAX_USER_AGE).toShort()
+    )
+}
+
+private fun buildPictureUrl(pictureId: Int): String =
+    (if (pictureId % 2 == 0) "men" else "women").let {
+        "https://randomuser.me/api/portraits/$it/$pictureId.jpg"
+    }
 
 data class UserContainer(
     val id: Int,
@@ -8,50 +44,4 @@ data class UserContainer(
     val fullName: String,
     val url: String,
     val age: Short
-)
-
-val usersContainers = listOf(
-    UserContainer(
-        id = 1,
-        username = "gab.herrera",
-        fullName = "Gabriel Herrera",
-        url = "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        age = 23
-    ),
-    UserContainer(
-        id = 2,
-        username = "ann.solis",
-        fullName = "Ann Solís",
-        url = "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        age = 24
-    ),
-    UserContainer(
-        id = 3,
-        username = "lucia.conti",
-        fullName = "Lucía Conti",
-        url = "https://images.pexels.com/photos/1462637/pexels-photo-1462637.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        age = 21
-    ),
-    UserContainer(
-        id = 4,
-        username = "pedro.pascal",
-        fullName = "Pedro Pascal",
-        url = "https://images.pexels.com/photos/904276/pexels-photo-904276.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        age = 34
-    ),
-    UserContainer(
-        id = 5,
-        username = "sofia.cabrera",
-        fullName = "Sofía Cabrera",
-        url = "https://images.pexels.com/photos/789822/pexels-photo-789822.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        age = 20
-    ),
-    UserContainer(
-        id = 6,
-        username = "jose.torres",
-        fullName = "José Torres",
-        url = "https://images.pexels.com/photos/927022/pexels-photo-927022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        age = 27
-    ),
-
 )
