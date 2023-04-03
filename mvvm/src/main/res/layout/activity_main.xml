@@ -7,7 +7,7 @@
 
         <variable
             name="userAdapter"
-            type="com.example.mvp.view.adapters.UserAdapter" />
+            type="com.example.mvc.views.adapters.UserAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
